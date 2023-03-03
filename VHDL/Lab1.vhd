@@ -1,0 +1,102 @@
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity comparator is
+port(   a,b   : in unsigned(7 downto 0) := (others => '0');
+    result  : out  std_logic);
+end comparator;
+ 
+architecture arch_comparator of comparator is
+signal interne : std_logic;
+begin
+	interne <= '1' when a >= b else '0';
+ 	result <= interne;
+end arch_comparator;
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity soustractor is
+port(   a,b   : in signed(7 downto 0) := (others => '0');
+    nb_places  : out  signed(7 downto 0) := (others => '0'));
+end soustractor;
+ 
+architecture arch_soustractor of soustractor is
+signal interne : signed(7 downto 0) := (others => '0');
+begin
+	interne <= b - a;
+ 	nb_places <= interne;
+end arch_soustractor;
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+
+entity registre is
+port(   clk,reset,load   :        in std_logic;
+        d_in             :        in std_logic_vector(7 downto 0);
+        d_out            :        out std_logic_vector(7 downto 0));
+end registre;
+
+architecture arch_registre of registre is
+begin
+        process(clk,reset)
+                begin
+                if reset='1' then d_out <= (others => '0');
+                elsif rising_edge(clk) then 
+                        if load='1' then d_out <= d_in;
+                        end if;
+                end if;
+        end process;
+end arch_registre;
+
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity counter is
+port(   clk,reset,up,down:        in std_logic;
+        count            :        out unsigned(7 downto 0) := (others => '0'));
+end counter;
+
+architecture arch_counter of counter is
+signal interne : unsigned(7 downto 0) := (others => '0');
+begin
+        process(clk,reset)
+                begin
+                if reset='1' then count <= (others => '0');
+                elsif rising_edge(clk) then 
+                        if up = '1' then interne <= interne + 1;
+			end if;
+			if down = '1' then interne <= interne - 1;
+                        end if;
+                end if;
+        end process;
+	count <= interne;
+end arch_counter;
+
+library IEEE;
+use IEEE.std_logic_1164.all;
+use IEEE.numeric_std.all;
+
+entity detec_E is
+port(   clk,reset,E	:        in std_logic;
+        ft_mt            :        out std_logic;
+end detec_E;
+
+architecture arch_detec_E of detec_E is
+type state is (E_0,E_1,E_2);
+signal actual_state, next_state : state;
+begin
+        process(clk,reset)
+                begin
+                if reset='1' then actual_state <= E_0;
+                elsif rising_edge(clk) then actual_state <= next_state;
+                end if;
+        end process;
+	ft_mt <= '1' when actual_state = E_1 else '0';
+end arch_detec_E;
